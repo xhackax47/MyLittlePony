@@ -10,10 +10,14 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -31,10 +35,11 @@ public class Race implements Serializable {
 	private String location;
 	
 	@Column(name="DATE")
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date date;
 	
-	@Column(name="PONIES")
-	@OneToMany
+	@ManyToMany
+	@JoinTable(name="race_pony", joinColumns=@JoinColumn(name="race_id"), inverseJoinColumns=@JoinColumn(name="pony_id"))	
 	private Collection<Pony> ponies;
 	
 	public Race() {}
