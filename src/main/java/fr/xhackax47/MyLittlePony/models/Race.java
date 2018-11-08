@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -38,7 +39,7 @@ public class Race implements Serializable {
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date date;
 	
-	@ManyToMany
+	@ManyToMany(cascade=CascadeType.REMOVE)
 	@JoinTable(name="race_pony", joinColumns=@JoinColumn(name="race_id"), inverseJoinColumns=@JoinColumn(name="pony_id"))	
 	private Collection<Pony> ponies;
 	
