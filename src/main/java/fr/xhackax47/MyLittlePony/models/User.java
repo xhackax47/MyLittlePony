@@ -1,45 +1,111 @@
 package fr.xhackax47.MyLittlePony.models;
 
-import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name="PONY_USER")
-public class User implements Serializable{
+@Table(name="USERS", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"username"}),
+        @UniqueConstraint(columnNames = {"email"})
+    })
+public class User implements UserDetails{
 
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = -106447070342620115L;
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="ID")
 	private Long id;
 	
-	@Column(name="LOGIN")
-	private String login;
+	@Column(name="USERNAME")
+	private String username;
 	
+    @JsonIgnore
 	@Column(name="PASSWORD")
 	private String password;
+    
+	@Column(name="NAME")
+    private String name;
+    
+    @JsonIgnore
+	@Column(name="EMAIL")
+    private String email;
+    	
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
+
 
 	public User() {
-		super();
 	}
 
 	public User(Long id, String login, String password) {
 		super();
 		this.id = id;
-		this.login = login;
+		this.username = login;
 		this.password = password;
 	}
+	
+    public User(String name, String username, String email, String password) {
+        this.name = name;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
+	
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User that = (User) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id);
+    }
+	
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+    
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+    
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+    
+    public boolean isEnabled() {
+        return true;
+    }
 
 	public Long getId() {
 		return id;
@@ -49,12 +115,12 @@ public class User implements Serializable{
 		this.id = id;
 	}
 
-	public String getLogin() {
-		return login;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setLogin(String login) {
-		this.login = login;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public String getPassword() {
@@ -65,8 +131,34 @@ public class User implements Serializable{
 		this.password = password;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

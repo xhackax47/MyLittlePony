@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,19 +30,14 @@ public class UserController {
 	@Autowired
 	private UserRepository userRepo;
 	
-//	@CrossOrigin(origins ="*")
-//  @GetMapping("/login")
-//  public boolean login(@RequestBody User user) {
-//      return
-//        user.getUserName().equals("user") && user.getPassword().equals("password");
-//  }
-	
     @CrossOrigin(origins = "*")
 	@GetMapping("/") 
-	public Collection<User> getAllPonies() {
+    @Secured("ROLE_ADMIN")
+	public Collection<User> getAllUsers() {
 		return (Collection<User>) userRepo.findAll();
 	}
     
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @CrossOrigin(origins = "*")
 	@GetMapping("/{id}")
 	public User getUserById(@PathVariable(value="id") Long id) {
@@ -49,11 +45,12 @@ public class UserController {
 		return user;
 	}
     
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @CrossOrigin(origins = "*")
 	@GetMapping("/user/{login}")
-	public User getUserByName(@RequestBody User u, @PathVariable String login) throws Exception {
+	public User getUserByName(@PathVariable String username) throws Exception {
     	List<User> listUsr = userRepo.findAll();
-    	List<User> filteredListUsr = listUsr.stream().filter(user -> user.getLogin().equals(login)).collect(Collectors.toList());
+    	List<User> filteredListUsr = listUsr.stream().filter(user -> user.getUsername().equals(username)).collect(Collectors.toList());
     	if(filteredListUsr.isEmpty()) {
     		throw new Exception();
     	}else {
@@ -61,25 +58,28 @@ public class UserController {
     	}
 	}
 	
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @CrossOrigin(origins = "*")
 	@PostMapping("/")
 	public User addUser(@RequestBody User user) {
 		return userRepo.save(user);
 	}
 	
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @CrossOrigin(origins = "*")
 	@PutMapping("/{id}")
 	public User updateUser(@PathVariable(value="id") Long id, @Valid @RequestBody User u) {
     	User user = userRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "id", id));
-		user.setLogin(u.getLogin());
+		user.setUsername(u.getUsername());
 		user.setPassword(u.getPassword());
 		User userUp = userRepo.save(user);
 		return userUp;
 	}
 	
+    @Secured({"ROLE_ADMIN"})
     @CrossOrigin(origins = "*")
 	@DeleteMapping("/{id}")
-	public void deleteUser(@RequestBody User u, @PathVariable Long id) {
+	public void deleteUser(@PathVariable Long id) {
 		userRepo.deleteById(id);
 	}
 
