@@ -21,6 +21,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
                          AuthenticationException e) throws IOException, ServletException {
         logger.error("L'application a repondu avec une erreur non autorisée. Message - {}", e.getMessage());
         httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                "Désolé mais vous n'avez pas le droit d'accéder à cette ressource.");
-    }
+                "Désolé mais vous n'avez pas le droit d'accéder à cette ressource."
+        		);    }
 }

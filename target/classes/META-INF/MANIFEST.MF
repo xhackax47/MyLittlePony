@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Implementation-Title: MyLittlePony
 Implementation-Version: 0.0.1-SNAPSHOT
-Built-By: formation
+Built-By: Megaport
 Implementation-Vendor-Id: fr.xhackax47
-Build-Jdk: 1.8.0_191
+Build-Jdk: 1.8.0_192
 Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
  ot-starter-parent/MyLittlePony
 Created-By: Maven Integration for Eclipse

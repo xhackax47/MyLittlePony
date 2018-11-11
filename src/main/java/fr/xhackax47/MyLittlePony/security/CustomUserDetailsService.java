@@ -1,6 +1,4 @@
-package fr.xhackax47.MyLittlePony.services;
-
-import java.util.Objects;
+package fr.xhackax47.MyLittlePony.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,25 +9,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fr.xhackax47.MyLittlePony.dao.UserRepository;
 import fr.xhackax47.MyLittlePony.models.User;
-import fr.xhackax47.MyLittlePony.security.UserPrincipal;
 
 @Service
-public class UserService implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
 	
 	@Autowired
-    private final UserRepository userRepository;
-	
-    @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    UserRepository userRepository;
     
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Objects.requireNonNull(username);
-        User user = userRepository.findUserWithName(username).orElseThrow(() -> new UsernameNotFoundException("Utilisateur inexistant"));
-        return user;
+    public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
+        User user = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail).orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé : " + usernameOrEmail));
+        return UserPrincipal.create(user);
     }
     
     @Transactional

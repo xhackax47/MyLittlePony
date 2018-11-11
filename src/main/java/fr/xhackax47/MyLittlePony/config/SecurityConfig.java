@@ -1,4 +1,4 @@
-package fr.xhackax47.MyLittlePony.security;
+package fr.xhackax47.MyLittlePony.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +16,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import fr.xhackax47.MyLittlePony.services.UserService;
+import fr.xhackax47.MyLittlePony.security.AuthProvider;
+import fr.xhackax47.MyLittlePony.security.CustomUserDetailsService;
+import fr.xhackax47.MyLittlePony.security.JwtAuthenticationEntryPoint;
+import fr.xhackax47.MyLittlePony.security.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -24,14 +27,14 @@ import fr.xhackax47.MyLittlePony.services.UserService;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	UserService userDetailsService;
+	CustomUserDetailsService customUserDetailsService;
 	
     @Autowired
     private JwtAuthenticationEntryPoint unauthorizedHandler;
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+		auth.userDetailsService(customUserDetailsService).passwordEncoder(passwordEncoder());
 	}
 
 	@Override
@@ -47,9 +50,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-			.authorizeRequests()
-				.antMatchers("/api/auth/**").permitAll()
-				.antMatchers(HttpMethod.GET,"/api/users/", "/api/ponies/", "/api/races/").permitAll()
+                .authorizeRequests()
+				.antMatchers("/api/users/login", "/api/users/register").permitAll()
+				.antMatchers(HttpMethod.GET, "/api/ponies/", "/api/races/").permitAll()
 				.anyRequest().authenticated();
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
@@ -63,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	public AuthenticationProvider getProvider() {
 		AuthProvider provider = new AuthProvider();
-		provider.setUserDetailsService(userDetailsService);
+		provider.setUserDetailsService(customUserDetailsService);
 		return provider;
 	}
 	

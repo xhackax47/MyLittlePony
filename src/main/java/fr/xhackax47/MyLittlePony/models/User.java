@@ -1,6 +1,5 @@
 package fr.xhackax47.MyLittlePony.models;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -17,12 +16,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.NaturalId;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -30,9 +29,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
         @UniqueConstraint(columnNames = {"username"}),
         @UniqueConstraint(columnNames = {"email"})
     })
-public class User implements UserDetails{
-
-	private static final long serialVersionUID = -106447070342620115L;
+public class User {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -42,14 +39,19 @@ public class User implements UserDetails{
 	@Column(name="USERNAME")
 	private String username;
 	
-    @JsonIgnore
-	@Column(name="PASSWORD")
+    @NotBlank
+    @Size(max = 100)
+    @Column(name="PASSWORD")
 	private String password;
     
+    @NotBlank
 	@Column(name="NAME")
     private String name;
     
-    @JsonIgnore
+    @NaturalId
+    @NotBlank
+    @Size(max = 40)
+    @Email
 	@Column(name="EMAIL")
     private String email;
     	
@@ -154,11 +156,5 @@ public class User implements UserDetails{
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
-
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

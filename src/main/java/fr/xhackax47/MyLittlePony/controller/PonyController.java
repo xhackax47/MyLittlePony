@@ -11,6 +11,7 @@ import javax.validation.Valid;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,6 +54,7 @@ public class PonyController {
 	
     @CrossOrigin(origins = "*")
 	@PostMapping("/")
+    @PreAuthorize("hasRole('USER')")
 	public Pony addPony(@RequestBody Pony p) {
 		return ponyRepo.save(p);
 	}

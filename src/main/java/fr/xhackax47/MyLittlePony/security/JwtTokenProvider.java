@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import fr.xhackax47.MyLittlePony.models.User;
-
 import java.util.Date;
 
 @Component
@@ -24,7 +22,7 @@ public class JwtTokenProvider {
 
     public String generateToken(Authentication authentication) {
 
-        User user = (User) authentication.getPrincipal();
+        UserPrincipal user = (UserPrincipal) authentication.getPrincipal();
 
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);

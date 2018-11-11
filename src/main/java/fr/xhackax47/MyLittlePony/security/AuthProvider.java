@@ -8,19 +8,17 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import fr.xhackax47.MyLittlePony.services.UserService;
-
 public class AuthProvider extends DaoAuthenticationProvider {
 	
     @Autowired
-    UserService userDetailsService;
+    CustomUserDetailsService customUserDetailsService;
     
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         UsernamePasswordAuthenticationToken auth = (UsernamePasswordAuthenticationToken) authentication;
         String username = auth.getName();
         String password = auth.getCredentials().toString();
-        UserDetails user = userDetailsService.loadUserByUsername(username);
+        UserDetails user = customUserDetailsService.loadUserByUsername(username);
         if (user == null) {
             throw new BadCredentialsException("Couple Login/Password incorrect " + auth.getPrincipal());
         }
