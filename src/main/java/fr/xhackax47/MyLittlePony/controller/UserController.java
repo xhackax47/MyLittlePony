@@ -47,7 +47,7 @@ public class UserController {
     RoleRepository roleRepository;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    PasswordEncoder passwordEncoder;    
 
     @Autowired
     JwtTokenProvider tokenProvider;
@@ -80,8 +80,9 @@ public class UserController {
 	}
 	
     @CrossOrigin(origins = "*")
-	@PostMapping("/")
+	@PostMapping("/register")
 	public User addUser(@RequestBody User user) {
+    	user.setPassword(passwordEncoder.encode(user.getPassword()));
 		return userRepository.save(user);
 	}
     

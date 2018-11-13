@@ -1,6 +1,7 @@
 package fr.xhackax47.MyLittlePony.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;

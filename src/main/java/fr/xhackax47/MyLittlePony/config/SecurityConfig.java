@@ -21,6 +21,7 @@ import fr.xhackax47.MyLittlePony.security.CustomUserDetailsService;
 import fr.xhackax47.MyLittlePony.security.JwtAuthenticationEntryPoint;
 import fr.xhackax47.MyLittlePony.security.JwtAuthenticationFilter;
 
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
@@ -51,9 +52,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-				.antMatchers("/api/users/login", "/api/users/register").permitAll()
-				.antMatchers(HttpMethod.GET, "/api/ponies/", "/api/races/").permitAll()
-				.anyRequest().authenticated();
+				.antMatchers("/api/users/login", "/api/users/register").permitAll().anyRequest().anonymous()
+				.antMatchers("/api/ponies/", "/api/races/", "/api/users/").permitAll().anyRequest().authenticated();
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
 	}

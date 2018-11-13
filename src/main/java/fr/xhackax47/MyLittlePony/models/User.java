@@ -44,12 +44,10 @@ public class User {
     @Column(name="PASSWORD")
 	private String password;
     
-    @NotBlank
 	@Column(name="NAME")
     private String name;
     
     @NaturalId
-    @NotBlank
     @Size(max = 40)
     @Email
 	@Column(name="EMAIL")
